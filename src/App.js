@@ -1,6 +1,5 @@
-import logo from './logo.svg';
 import './App.css';
-import ToDoApp from './ToDoApp';
+import ToDoApp from './ToDoApp.tsx'
 
 
 function App() {
