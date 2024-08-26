@@ -29,7 +29,7 @@ function ToDoApp() {
           onChange={(e) => setJob(e.target.value)}
         />
         <button
-          className="bg-yellow-200 text-gray-900 border-solid border w-20 border-[#333] rounded-md"
+          className="bg-yellow-200 text-gray-900 border-solid border w-20 border-[#333] rounded-md hover:text-yellow-200 hover:bg-gray-900"
           onClick={handleAddTask}
         >
           Add Task
