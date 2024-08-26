@@ -11,14 +11,17 @@ function ToDoApp() {
   const [job, setJob] = useState("");
 
   const handleAddTask = () => {
-    const newTask = {
-      id: Math.random(),
-      text: job,
-      completed: false,
-    };
-    setTasks([...tasks, newTask]);
-    setJob("");
+    if (job !== "") {
+      const newTask = {
+        id: Math.random(),
+        text: job,
+        completed: false,
+      };
+      setTasks([...tasks, newTask]);
+      setJob("");
+    }
   };
+
   return (
     <div className="flex items-center justify-center h-screen gap-6 flex-col bg-gradient-to-r from-green-400 via-blue-500 to-purple-600">
       <div className="flex items-center justify-center gap-4">
@@ -36,8 +39,8 @@ function ToDoApp() {
           Add Task
         </button>
       </div>
-      <div className="w-11/12 max-w-md p-6 bg-white bg-opacity-80 backdrop-blur-lg rounded-lg shadow-xl">
-        <ul className="flex flex-col gap-4">
+      <div className="w-auto justify-between flex max-w-full p-6 bg-white bg-opacity-80 backdrop-blur-lg rounded-lg shadow-xl">
+        <ul className="flex flex-col gap-2">
           {tasks.map((item, index) => (
             <li
               key={index}
