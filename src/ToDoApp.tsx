@@ -24,6 +24,8 @@ function ToDoApp() {
       };
       setTasks([...tasks, newTask]);
       setJob("");
+    } else {
+      alert("No task added yet");
     }
   }, [job]);
 
