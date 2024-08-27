@@ -12,6 +12,7 @@ interface Task {
 function ToDoApp() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [job, setJob] = useState("");
+  const [complete, setComplete] = useState(false);
 
   const handleAddTask = useCallback(() => {
     // console.log(`function is called`);
@@ -27,13 +28,18 @@ function ToDoApp() {
     } else {
       alert("No task added yet");
     }
-  }, [job]);
+  }, [job, tasks]);
 
   const handleDeleteTask = (id: number) => {
     const newTask = tasks.filter((job) => job.id !== id);
     setTasks(newTask);
   };
 
+  const handleCompleteTask = (task) => {
+    setComplete(task.status);
+    setComplete(!complete)
+    task.completed = complete;  
+  };
   return (
     <Container>
       <div className="flex items-center justify-center gap-4">
@@ -44,7 +50,7 @@ function ToDoApp() {
         <ul className="flex flex-col gap-2">
           {tasks.map((item, index) => (
             <li
-              key={index}
+              key={`${item.id}-${index}`} //id-index
               className="flex flex-row items-center gap-4 p-4 bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
             >
               <div className="font-bold text-gray-700">ID:</div>
@@ -54,6 +60,10 @@ function ToDoApp() {
               <Button
                 onClick={() => handleDeleteTask(item.id)}
                 name={`Remove`}
+              />
+              <Button
+                onClick={() => handleCompleteTask(item)}
+                name={item.completed ? `Done` : `Complete`}
               />
             </li>
           ))}
