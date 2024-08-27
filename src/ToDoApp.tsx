@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useRef } from "react";
 import Container from "./components/Container.tsx";
 import Input from "./components/Input.tsx";
 import Button from "./components/Button.tsx";
@@ -12,10 +12,11 @@ interface Task {
 function ToDoApp() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [job, setJob] = useState("");
-  const [complete, setComplete] = useState(false);
+
+  const focusInput = useRef<HTMLInputElement | null>(null);
 
   const handleAddTask = useCallback(() => {
-    // console.log(`function is called`);
+    // console.log(`add function is called`);
 
     if (job !== "") {
       const newTask = {
@@ -25,25 +26,32 @@ function ToDoApp() {
       };
       setTasks([...tasks, newTask]);
       setJob("");
+      focusInput.current!.focus();
     } else {
       alert("No task added yet");
     }
   }, [job, tasks]);
 
   const handleDeleteTask = (id: number) => {
+    // console.log('delete function is called');
+    
     const newTask = tasks.filter((job) => job.id !== id);
     setTasks(newTask);
   };
 
   const handleCompleteTask = (task) => {
-    setComplete(task.status);
-    setComplete(!complete)
-    task.completed = complete;  
-  };
+  //  const updateTask = { ...task, completed: !task.completed }; //tasks
+    setTasks((prev) => prev.map((item) => {
+      if(task.id === item.id) {
+        item.completed = true
+      }
+      return item;
+    }))
+  }
   return (
     <Container>
       <div className="flex items-center justify-center gap-4">
-        <Input job={job} setJob={setJob} />
+        <Input focus={focusInput} job={job} setJob={setJob} />
         <Button onClick={handleAddTask} name={`Add Task`} />
       </div>
       <div className="w-auto justify-between flex max-w-full p-6 bg-white bg-opacity-80 backdrop-blur-lg rounded-lg shadow-xl">

@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 
 function Button({ onClick, name }) {
-  // console.log(onClick);
+//   console.log(onClick);
   return (
     <button
       className={
