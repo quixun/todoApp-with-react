@@ -8,7 +8,7 @@ interface Task {
 
 function ToDoApp() {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [job, setJob] = useState('');
+  const [job, setJob] = useState('')
 
   const handleAddTask = () => {
     const newTask = {
