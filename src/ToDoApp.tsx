@@ -15,7 +15,6 @@ function ToDoApp() {
     JSON.parse(localStorage.getItem("job") || "[]")
   );
   const [job, setJob] = useState("");
-    
   const focusInput = useRef<HTMLInputElement | null>(null);
 
   const handleAddTask = useCallback(() => {
