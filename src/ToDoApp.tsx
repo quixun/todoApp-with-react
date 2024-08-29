@@ -18,6 +18,7 @@ function ToDoApp() {
     };
     setTasks([...tasks, newTask]);
   };
+
   return (
     <div className="flex items-center justify-center h-screen gap-3 flex-col">
       <div className="flex items-center justify-center gap-4">
