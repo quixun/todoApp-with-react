@@ -8,7 +8,7 @@ interface Task {
 
 function ToDoApp() {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [job, setJob] = useState("");
+  const [job, setJob] = useState('');
 
   const handleAddTask = () => {
     const newTask = {
@@ -26,7 +26,7 @@ function ToDoApp() {
           className="bg-yellow-200 text-gray-900 focus:outline-lime-600"
           type="text"
           value={job}
-          onChange={(e) => setJob(e.target.value)}
+          onChange={(e) => setJob(e.target.value.trim())}
         />
         <button
           className="bg-yellow-200 text-gray-900 border-solid border w-20 border-[#333] rounded-md hover:text-yellow-200 hover:bg-gray-900"
