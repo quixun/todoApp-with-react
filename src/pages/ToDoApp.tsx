@@ -1,21 +1,29 @@
 import React, { useCallback, useState, useRef } from "react";
-import Container from "./components/Container.tsx";
-import Input from "./components/Input.tsx";
-import Button from "./components/Button.tsx";
-import Tasks from "./components/Tasks.tsx";
+import { useForm } from "react-hook-form";
+import Container from "../components/Container.tsx";
+import { Input } from "../components/Input.tsx";
+import { Button } from "../components/Button.tsx";
+import { Tasks } from "../components/Tasks.tsx";
 
-interface Task {
+type Task = {
   id: number;
   text: string;
   completed: boolean;
-}
+};
 
 function ToDoApp() {
   const [tasks, setTasks] = useState<Task[]>(
     JSON.parse(localStorage.getItem("job") || "[]")
   );
   const [job, setJob] = useState("");
+
   const focusInput = useRef<HTMLInputElement | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const handleAddTask = useCallback(() => {
     // console.log(`add function is called`);
@@ -64,14 +72,28 @@ function ToDoApp() {
 
   return (
     <Container>
-      <div className="flex items-center justify-center gap-4">
-        <Input focus={focusInput} job={job} setJob={setJob} />
-        <Button onClick={handleAddTask} name={`Add Task`} />
-      </div>
+      <form
+        onSubmit={handleSubmit(handleAddTask)}
+        className="flex items-center justify-center gap-4"
+      >
+        <Input
+          focus={focusInput}
+          register={register}
+          error={errors}
+          job={job}
+          setJob={setJob}
+        />
+        <Button type={"submit"} name={`Add Task`} />
+      </form>
       <div className="w-auto justify-between flex max-w-full p-6 bg-white bg-opacity-80 backdrop-blur-lg rounded-lg shadow-xl">
         <ul className="flex flex-col gap-2">
           {tasks.map((item, index) => (
-            <Tasks item={item} index={index} handleCompleteTask={handleCompleteTask} handleDeleteTask={handleDeleteTask}/>
+            <Tasks
+              item={item}
+              index={index}
+              handleCompleteTask={handleCompleteTask}
+              handleDeleteTask={handleDeleteTask}
+            />
           ))}
         </ul>
       </div>

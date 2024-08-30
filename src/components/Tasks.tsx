@@ -1,7 +1,20 @@
 import React from "react";
-import Button from "./Button.tsx";
+import { Button } from "./Button.tsx";
 
-function Tasks({ item, index, handleDeleteTask, handleCompleteTask }) {
+type Task = {
+  id: number;
+  text: string;
+  completed: boolean;
+};
+
+type TaskProps = {
+  item: Task; 
+  index: number; 
+  handleDeleteTask: (id: number) => void; 
+  handleCompleteTask: (task: Task) => void; 
+};
+
+export const Tasks = ({ item, index, handleDeleteTask, handleCompleteTask }: TaskProps) => {
   return (
     <li
       key={`${item.id}-${index}`} //id-index
@@ -20,4 +33,3 @@ function Tasks({ item, index, handleDeleteTask, handleCompleteTask }) {
   );
 }
 
-export default Tasks;
