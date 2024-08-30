@@ -1,7 +1,12 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
+import { UUID } from "crypto";
+import { v4 as uuidv4 } from "uuid"; 
+import Container from "./components/Container.tsx";
+import TextInput from "./components/Input.tsx";
+import Button from "./components/Button.tsx";
 
-interface Task {
-  id: number;
+type Task = {
+  id: UUID;
   text: string;
   completed: boolean;
 }
@@ -10,34 +15,30 @@ function ToDoApp() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [job, setJob] = useState("");
 
-  const handleAddTask = () => {
+  const handleAddTask = useCallback(() => {
+    // console.log(`function is called`);
+
     if (job !== "") {
       const newTask = {
-        id: Math.random(),
+        id: uuidv4(),
         text: job,
         completed: false,
       };
       setTasks([...tasks, newTask]);
       setJob("");
     }
+  }, [job]);
+
+  const handleDeleteTask = (id: string) => {
+    const updateTasks = tasks.filter((job) => job.id !== id);
+    setTasks(updateTasks);
   };
 
   return (
-    <div className="flex items-center justify-center h-screen gap-6 flex-col bg-gradient-to-r from-green-400 via-blue-500 to-purple-600">
+    <Container>
       <div className="flex items-center justify-center gap-4">
-        <input
-          className="bg-yellow-200 text-gray-900 px-4 py-2 rounded-lg focus:outline-none focus:ring-4 focus:ring-lime-600 transition-all duration-300 ease-in-out"
-          type="text"
-          placeholder="Enter a task"
-          value={job}
-          onChange={(e) => setJob(e.target.value)}
-        />
-        <button
-          className="bg-yellow-200 text-gray-900 border border-solid w-24 py-2 rounded-lg transition-all duration-200 ease-in-out border-gray-900 hover:text-yellow-200 hover:bg-gray-900 hover:border-yellow-200"
-          onClick={() => handleAddTask()}
-        >
-          Add Task
-        </button>
+        <TextInput job={job} setJob={setJob} />
+        <Button onClick={handleAddTask} name={`Add Task`} />
       </div>
       <div className="w-auto justify-between flex max-w-full p-6 bg-white bg-opacity-80 backdrop-blur-lg rounded-lg shadow-xl">
         <ul className="flex flex-col gap-2">
@@ -50,11 +51,15 @@ function ToDoApp() {
               <div className="text-gray-500">{item.id}</div>
               <div className="font-bold text-gray-700">Task:</div>
               <div className="text-gray-500">{item.text}</div>
+              <Button
+                onClick={() => handleDeleteTask(item.id)}
+                name={`Remove`}
+              />
             </li>
           ))}
         </ul>
       </div>
-    </div>
+    </Container>
   );
 }
 
