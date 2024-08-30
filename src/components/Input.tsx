@@ -8,7 +8,7 @@ function Input({ job, setJob, focus }) {
       placeholder="Enter a task"
       value={job}
       ref={focus}
-      onChange={(e) => setJob(e.target.value)}
+      onChange={(e) => setJob(e.target.value.trim())}
     />
   );
 }
