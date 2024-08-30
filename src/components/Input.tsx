@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 
-function Input({ job, setJob, focus }) {
+function TextInput({ job, setJob, focus }) {
   return (
     <input
       className="bg-yellow-200 text-gray-900 px-4 py-2 rounded-lg focus:outline-none focus:ring-4 focus:ring-lime-600 transition-all duration-300 ease-in-out"
@@ -13,4 +13,4 @@ function Input({ job, setJob, focus }) {
   );
 }
 
-export default memo(Input);
+export default memo(TextInput);
