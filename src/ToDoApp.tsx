@@ -1,10 +1,12 @@
 import React, { useCallback, useState } from "react";
+import { UUID } from "crypto";
+import { v4 as uuidv4 } from "uuid"; 
 import Container from "./components/Container.tsx";
-import Input from "./components/Input.tsx";
+import TextInput from "./components/Input.tsx";
 import Button from "./components/Button.tsx";
 
-interface Task {
-  id: number;
+type Task = {
+  id: UUID;
   text: string;
   completed: boolean;
 }
@@ -18,7 +20,7 @@ function ToDoApp() {
 
     if (job !== "") {
       const newTask = {
-        id: Math.random(),
+        id: uuidv4(),
         text: job,
         completed: false,
       };
@@ -27,15 +29,15 @@ function ToDoApp() {
     }
   }, [job]);
 
-  const handleDeleteTask = (id: number) => {
-    const newTask = tasks.filter((job) => job.id !== id);
-    setTasks(newTask);
+  const handleDeleteTask = (id: string) => {
+    const updateTasks = tasks.filter((job) => job.id !== id);
+    setTasks(updateTasks);
   };
 
   return (
     <Container>
       <div className="flex items-center justify-center gap-4">
-        <Input job={job} setJob={setJob} />
+        <TextInput job={job} setJob={setJob} />
         <Button onClick={handleAddTask} name={`Add Task`} />
       </div>
       <div className="w-auto justify-between flex max-w-full p-6 bg-white bg-opacity-80 backdrop-blur-lg rounded-lg shadow-xl">
