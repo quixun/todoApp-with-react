@@ -1,5 +1,5 @@
-import React, { useCallback, useState, useRef } from "react";
-import { useForm } from "react-hook-form";
+import React, { useState, useRef } from "react";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import Container from "../components/Container.tsx";
 import { Input } from "../components/Input.tsx";
 import { Button } from "../components/Button.tsx";
@@ -11,63 +11,54 @@ type Task = {
   completed: boolean;
 };
 
+type FormValues = {
+  task: string;
+};
+
 function ToDoApp() {
   const [tasks, setTasks] = useState<Task[]>(
     JSON.parse(localStorage.getItem("job") || "[]")
   );
-  const [job, setJob] = useState("");
-
   const focusInput = useRef<HTMLInputElement | null>(null);
 
   const {
-    register,
+    control,
     handleSubmit,
-    formState: { errors },
-  } = useForm();
+    getValues,
+    reset,
+  } = useForm<FormValues>();
 
-  const handleAddTask = useCallback(() => {
-    // console.log(`add function is called`);
+  getValues("task");
 
-    if (job !== "") {
+  const handleAddTask: SubmitHandler<FormValues> = (data) => {
+    if (data.task.trim() !== "") {
       const newTask = {
         id: Math.random(),
-        text: job,
+        text: data.task,
         completed: false,
       };
-      setTasks([...tasks, newTask]);
-      const jsonJob = JSON.stringify([...tasks, newTask]);
-      localStorage.setItem("job", jsonJob);
-      setJob("");
-      focusInput.current!.focus();
+      const updatedTasks = [...tasks, newTask];
+      setTasks(updatedTasks);
+      localStorage.setItem("job", JSON.stringify(updatedTasks));
+      reset();
+      focusInput.current?.focus();
     } else {
       alert("No task added yet");
     }
-  }, [job, tasks]);
-
-  const handleDeleteTask = (id: number) => {
-    // console.log('delete function is called');
-
-    const newTask = tasks.filter((job) => job.id !== id);
-    setTasks(newTask);
-    const jsonJob = JSON.stringify(newTask);
-    localStorage.setItem("job", jsonJob);
   };
 
-  const handleCompleteTask = (task) => {
-    //  const updateTask = { ...task, completed: !task.completed }; //tasks
-    setTasks((prev) => {
-      const updatedTasks = prev.map((item) => {
-        if (task.id === item.id) {
-          return { ...item, completed: true };
-        }
-        return item;
-      });
+  const handleDeleteTask = (id: number) => {
+    const updatedTasks = tasks.filter((task) => task.id !== id);
+    setTasks(updatedTasks);
+    localStorage.setItem("job", JSON.stringify(updatedTasks));
+  };
 
-      const jsonJob = JSON.stringify(updatedTasks);
-      localStorage.setItem("job", jsonJob);
-
-      return updatedTasks;
-    });
+  const handleCompleteTask = (task: Task) => {
+    const updatedTasks = tasks.map((item) =>
+      item.id === task.id ? { ...item, completed: !item.completed } : item
+    );
+    setTasks(updatedTasks);
+    localStorage.setItem("job", JSON.stringify(updatedTasks));
   };
 
   return (
@@ -76,19 +67,31 @@ function ToDoApp() {
         onSubmit={handleSubmit(handleAddTask)}
         className="flex items-center justify-center gap-4"
       >
-        <Input
-          focus={focusInput}
-          register={register}
-          error={errors}
-          job={job}
-          setJob={setJob}
-        />
-        <Button type={"submit"} name={`Add Task`} />
+        <Controller
+          control={control}
+          name="task"
+          rules={{ required: "this field is required", minLength: 2 }}
+          render={({
+            fieldState: { invalid, error },
+            field: { onChange, value },
+          }) => {
+            return (
+              <Input
+                focus={focusInput}
+                job={value}
+                error={error}
+                onChange={onChange}
+              />
+            );
+          }}
+        ></Controller>
+        <Button type="submit" name="Add Task" />
       </form>
       <div className="w-auto justify-between flex max-w-full p-6 bg-white bg-opacity-80 backdrop-blur-lg rounded-lg shadow-xl">
         <ul className="flex flex-col gap-2">
           {tasks.map((item, index) => (
             <Tasks
+              key={`${item.id}-${index}`}
               item={item}
               index={index}
               handleCompleteTask={handleCompleteTask}

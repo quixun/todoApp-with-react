@@ -18,7 +18,7 @@ export const Tasks = ({ item, index, handleDeleteTask, handleCompleteTask }: Tas
   return (
     <li
       key={`${item.id}-${index}`} //id-index
-      className="flex flex-row items-center gap-4 p-4 bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+      className="flex flex-row items-center justify-center gap-4 p-4 bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
     >
       <div className="font-bold text-gray-700">ID:</div>
       <div className="text-gray-500">{item.id}</div>
