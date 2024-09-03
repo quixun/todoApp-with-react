@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import Container from "../components/Container.tsx";
-import { Input } from "../components/Input.tsx";
+import { TextInput } from "../components/Input.tsx";
 import { Button } from "../components/Button.tsx";
 import { Tasks } from "../components/Tasks.tsx";
 
@@ -76,7 +76,7 @@ function ToDoApp() {
             field: { onChange, value },
           }) => {
             return (
-              <Input
+              <TextInput
                 focus={focusInput}
                 job={value}
                 error={error}
