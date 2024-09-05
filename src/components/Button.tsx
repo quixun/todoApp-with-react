@@ -1,5 +1,11 @@
 import React from "react";
-import { ButtonProps } from "../types/buttonProps/ButtonProps";
+
+interface ButtonProps {
+  text: string;
+  onClick?: () => void;
+  type?: "button" | "submit" | "reset";
+  variant?: "primary" | "success";
+};
 
 export const Button = ({
   onClick,

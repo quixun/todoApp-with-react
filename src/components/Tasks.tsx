@@ -1,6 +1,11 @@
 import React from "react";
 import { Button } from "./Button";
-import { TaskProps } from "../types/taskProps/TaskProps";
+import { Task } from "../types/task/Task";
+interface TaskProps {
+  item: Task; 
+  onDelete: (id: string) => void; 
+  onComplete: (task: Task) => void; 
+};
 
 export const Tasks = ({ item, onDelete, onComplete }: TaskProps) => {
   return (
