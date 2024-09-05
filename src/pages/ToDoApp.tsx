@@ -5,23 +5,23 @@ import Container from "../components/Container";
 import { TextInput } from "../components/Input";
 import { Button } from "../components/Button";
 import { Tasks } from "../components/Tasks";
-import { Task } from "../types/task/task";
+import { Task } from "../types/task/Task";
 
 type FormValues = {
   task: string;
 };
 
-function ToDoApp() {
+export const ToDoApp = () => {
   const [tasks, setTasks] = useState<Task[]>(
     JSON.parse(localStorage.getItem("job") || "[]")
   );
-  const focusInput = useRef<HTMLInputElement | null>(null);
+  const InputRef = useRef<HTMLInputElement | null>(null);
 
-  const {
-    control,
-    handleSubmit,
-    setValue,
-  } = useForm<FormValues>();
+  const { control, handleSubmit, setValue } = useForm<FormValues>();
+
+  const saveTaskToLocalStorage = (task: Task[]) => {
+    localStorage.setItem("job", JSON.stringify(task));
+  };
 
   const handleAddTask: SubmitHandler<FormValues> = (data) => {
     if (data.task.trim() !== "") {
@@ -32,9 +32,9 @@ function ToDoApp() {
       };
       const updatedTasks = [...tasks, newTask];
       setTasks(updatedTasks);
-      localStorage.setItem("job", JSON.stringify(updatedTasks));
+      saveTaskToLocalStorage(updatedTasks);
       setValue("task", "");
-      focusInput.current?.focus();
+      InputRef.current?.focus();
     } else {
       alert("No task added yet");
     }
@@ -43,15 +43,15 @@ function ToDoApp() {
   const handleDeleteTask = (id: string) => {
     const updatedTasks = tasks.filter((task) => task.id !== id);
     setTasks(updatedTasks);
-    localStorage.setItem("job", JSON.stringify(updatedTasks));
+    saveTaskToLocalStorage(updatedTasks);
   };
 
   const handleCompleteTask = (task: Task) => {
     const updatedTasks = tasks.map((item) =>
-      item.id === task.id ? { ...item, completed: !item.completed } : item
+      item.id === task.id ? { ...item, completed: true } : item
     );
     setTasks(updatedTasks);
-    localStorage.setItem("job", JSON.stringify(updatedTasks));
+    saveTaskToLocalStorage(updatedTasks);
   };
 
   return (
@@ -73,25 +73,24 @@ function ToDoApp() {
           render={({ fieldState: { error }, field: { onChange, value } }) => {
             return (
               <TextInput
-                focus={focusInput}
-                job={value}
+                ref={InputRef}
+                value={value}
                 error={error}
                 onChange={onChange}
               />
             );
           }}
-        ></Controller>
-        <Button type="submit" name="Add Task" />
+        />
+        <Button type="submit" text="Add Task" />
       </form>
       <form className="w-auto justify-between flex max-w-full p-6 bg-white bg-opacity-80 backdrop-blur-lg rounded-lg shadow-xl">
         <ul className="flex flex-col gap-2">
-          {tasks.map((item, index) => (
+          {tasks.map((item) => (
             <Tasks
-              key={`${item.id}-${index}`}
+              key={item.id}
               item={item}
-              index={index}
-              handleCompleteTask={handleCompleteTask}
-              handleDeleteTask={handleDeleteTask}
+              onComplete={handleCompleteTask}
+              onDelete={handleDeleteTask}
             />
           ))}
         </ul>
@@ -99,5 +98,3 @@ function ToDoApp() {
     </Container>
   );
 }
-
-export default ToDoApp;

@@ -1,5 +1,5 @@
 import './styles/App.css';
-import ToDoApp from './pages/ToDoApp.tsx'
+import { ToDoApp } from './pages/ToDoApp.tsx'
 
 
 function App() {
