@@ -1,6 +1,7 @@
 import React, { ChangeEventHandler } from "react";
 import { FieldError } from "react-hook-form";
 
+
 type InputProps = {
   job: string;
   onChange: ChangeEventHandler<HTMLInputElement>;
@@ -9,7 +10,6 @@ type InputProps = {
 };
 
 export const TextInput = ({ job, onChange, focus, error }: InputProps) => {
-  console.log(error);
   return (
     <>
       <input

@@ -7,7 +7,7 @@ type ButtonProps = {
 };
 
 export const Button = ({ onClick, name, type }: ButtonProps) => {
-  // console.log(onClick);
+  console.log("button is re-render");
   return (
     <button
       type={type}

@@ -1,15 +1,11 @@
 import React, { useState, useRef } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import Container from "../components/Container.tsx";
-import { TextInput } from "../components/Input.tsx";
-import { Button } from "../components/Button.tsx";
-import { Tasks } from "../components/Tasks.tsx";
-
-type Task = {
-  id: number;
-  text: string;
-  completed: boolean;
-};
+import { v4 as uuid4 } from "uuid";
+import Container from "../components/Container";
+import { TextInput } from "../components/Input";
+import { Button } from "../components/Button";
+import { Tasks } from "../components/Tasks";
+import { Task } from "../types/task/task";
 
 type FormValues = {
   task: string;
@@ -24,30 +20,27 @@ function ToDoApp() {
   const {
     control,
     handleSubmit,
-    getValues,
-    reset,
+    setValue,
   } = useForm<FormValues>();
-
-  getValues("task");
 
   const handleAddTask: SubmitHandler<FormValues> = (data) => {
     if (data.task.trim() !== "") {
       const newTask = {
-        id: Math.random(),
+        id: uuid4(),
         text: data.task,
         completed: false,
       };
       const updatedTasks = [...tasks, newTask];
       setTasks(updatedTasks);
       localStorage.setItem("job", JSON.stringify(updatedTasks));
-      reset();
+      setValue("task", "");
       focusInput.current?.focus();
     } else {
       alert("No task added yet");
     }
   };
 
-  const handleDeleteTask = (id: number) => {
+  const handleDeleteTask = (id: string) => {
     const updatedTasks = tasks.filter((task) => task.id !== id);
     setTasks(updatedTasks);
     localStorage.setItem("job", JSON.stringify(updatedTasks));
@@ -70,11 +63,14 @@ function ToDoApp() {
         <Controller
           control={control}
           name="task"
-          rules={{ required: "this field is required", minLength: 2 }}
-          render={({
-            fieldState: { invalid, error },
-            field: { onChange, value },
-          }) => {
+          rules={{
+            required: { value: true, message: "this field is required" },
+            minLength: {
+              value: 2,
+              message: "this field is at least 2 character",
+            },
+          }}
+          render={({ fieldState: { error }, field: { onChange, value } }) => {
             return (
               <TextInput
                 focus={focusInput}
@@ -87,7 +83,7 @@ function ToDoApp() {
         ></Controller>
         <Button type="submit" name="Add Task" />
       </form>
-      <div className="w-auto justify-between flex max-w-full p-6 bg-white bg-opacity-80 backdrop-blur-lg rounded-lg shadow-xl">
+      <form className="w-auto justify-between flex max-w-full p-6 bg-white bg-opacity-80 backdrop-blur-lg rounded-lg shadow-xl">
         <ul className="flex flex-col gap-2">
           {tasks.map((item, index) => (
             <Tasks
@@ -99,7 +95,7 @@ function ToDoApp() {
             />
           ))}
         </ul>
-      </div>
+      </form>
     </Container>
   );
 }

@@ -1,16 +1,11 @@
 import React from "react";
-import { Button } from "./Button.tsx";
-
-type Task = {
-  id: number;
-  text: string;
-  completed: boolean;
-};
+import { Button } from "./Button";
+import { Task } from "../types/task/task";
 
 type TaskProps = {
   item: Task; 
   index: number; 
-  handleDeleteTask: (id: number) => void; 
+  handleDeleteTask: (id: string) => void; 
   handleCompleteTask: (task: Task) => void; 
 };
 
