@@ -1,10 +1,12 @@
-import React, { useState, useRef } from "react";
-import { useForm, SubmitHandler, Controller ,Form} from "react-hook-form";
+import React, { useState } from "react";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { v4 as uuid4 } from "uuid";
 import styled from "styled-components";
 import { TextInput } from "../components/TextInput";
 import { TaskCard } from "../components/TaskCard";
-import { Task } from "../types/task/Task";
+import { Task } from "../types/Task";
+import { theme } from "../styles/theme";
+import { Button, kind } from "../components/Button";
 
 type FormValues = {
   task: string;
@@ -14,8 +16,6 @@ export const ToDoApp = () => {
   const [tasks, setTasks] = useState<Task[]>(
     JSON.parse(localStorage.getItem("job") || "[]")
   );
-  const inputRef = useRef<HTMLInputElement>(null);
-
   const { control, handleSubmit, setValue } = useForm<FormValues>();
 
   const saveTaskToLocalStorage = (task: Task[]) => {
@@ -33,9 +33,6 @@ export const ToDoApp = () => {
       setTasks(updatedTasks);
       saveTaskToLocalStorage(updatedTasks);
       setValue("task", "");
-      inputRef.current?.focus();
-
-      console.log("r")
     } else {
       alert("No task added yet");
     }
@@ -55,51 +52,6 @@ export const ToDoApp = () => {
     saveTaskToLocalStorage(updatedTasks);
   };
 
-  const Container = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background: #68d391;
-  `;
-  const CustomForm = styled.form`
-    width: 80%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 1rem;
-  `;
-
-  const UlCustom = styled.ul`
-    width: 52%;
-    display: flex-start;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    background-color: #FFF59D;
-    border: 3px solid #333; 
-    border-radius: 10px;
-    box-shadow: 5px 10px 0px 5px #333;
-    padding: 10px 0;
-    position: relative;
-
-    h1 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    font-weight: bold;
-    margin-bottom: 10px;
-    border-bottom: 3px solid #333;
-    padding-bottom: 20px;
-  }
-    span {
-    margin-left: 20px;
-    font-size: 20px;
-    }
-  
-  `
   return (
     <Container>
       <CustomForm onSubmit={handleSubmit(handleAddTask)}>
@@ -107,27 +59,36 @@ export const ToDoApp = () => {
           control={control}
           name="task"
           rules={{
-            required: { value: true, message: "please enter this field" },
+            required: { value: true, message: "Please enter this field" },
             minLength: {
               value: 2,
-              message: "please enter at least 2 character",
+              message: "Please enter at least 2 character",
             },
           }}
-          render={({ fieldState: { error }, field: { onChange, value } }) => {
+          render={({
+            fieldState: { error },
+            field: { onChange, value, ref },
+          }) => {
             return (
-              <TextInput
-                ref={inputRef}
-                value={value}
-                error={error}
-                onChange={onChange}
-                placeholder="Enter the thing to do"
-              />
+              <Wrapper>
+                <TextInput
+                  value={value}
+                  error={error}
+                  onChange={onChange}
+                  placeholder="Enter the thing to do"
+                />
+                <Button
+                  text="ADD"
+                  kind={kind.add}
+                  onClick={handleSubmit(handleAddTask)}
+                />
+              </Wrapper>
             );
           }}
         />
-        <UlCustom>
-          <h1>Things to do</h1>
-         {!tasks.length && <span>List is empty. Enter a new thing to do</span>}
+        <FormWrapper>
+          <Heading1>Things to do</Heading1>
+          {!tasks.length && <span>List is empty. Enter a new thing to do</span>}
           {tasks.map((item) => (
             <TaskCard
               key={item.id}
@@ -136,8 +97,62 @@ export const ToDoApp = () => {
               onDelete={handleDeleteTask}
             />
           ))}
-        </UlCustom>
+        </FormWrapper>
       </CustomForm>
     </Container>
   );
 };
+
+const Container = styled.div`
+  ${theme.alignment.center}
+  background-color: ${theme.color.primary};
+  min-height: 100vh;
+  padding: 50px 0;
+`;
+const CustomForm = styled.form`
+  ${theme.alignment.center}
+
+  width: 50%;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+`;
+
+const FormWrapper = styled.ul`
+  background-color: ${theme.color.secondary};
+  width: 80%;
+  display: flex-start;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 3px solid #333;
+  border-radius: 10px;
+  box-shadow: 5px 10px 0px 5px #333;
+  padding: 10px 0;
+  position: relative;
+`;
+
+const Heading1 = styled.h1`
+  ${theme.alignment.center}
+  width: 100%;
+  font-weight: bold;
+  margin-bottom: 10px;
+  border-bottom: 3px solid #333;
+  padding-bottom: 20px;
+  user-select: none;
+`;
+
+const Wrapper = styled.div`
+  width: 80%;
+  position: relative;
+  & > input:first-child {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  & > button:last-child {
+    position: absolute;
+    top: 8px;
+    right: 0;
+  }
+`;

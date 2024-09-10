@@ -1,10 +1,8 @@
 import { ToDoApp } from './pages/ToDoApp'
 import React from 'react';
-import '@fortawesome/fontawesome-free/css/all.min.css';
 
 
-
-function App() {
+export const App = () => {
   return (
     <div className="App">
       <ToDoApp />
@@ -12,4 +10,3 @@ function App() {
   );
 }
 
-export default App;

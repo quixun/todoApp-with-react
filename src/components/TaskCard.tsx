@@ -1,30 +1,59 @@
-import React from "react";
-import { Button, ButtonVariant } from "./Button";
-import { Task } from "../types/task/Task";
+import React, { ChangeEvent, useState } from "react";
+import { Button, kind } from "./Button";
+import { Task } from "../types/Task";
 import styled from "styled-components";
 
-interface TaskProps {
+type TaskProps = {
   item: Task;
   onDelete: (id: string) => void;
   onComplete: (task: Task) => void;
-}
+};
 
 export const TaskCard = ({ item, onDelete, onComplete }: TaskProps) => {
-  const TaskCard = styled.div`
-    width: 95%;
-    margin-bottom: 20px; 
-    margin-left: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 20px;
-    transition: all 0.5s ease-in-out;
-      &:hover{
-        background-color: #ffff;
-        user-select: none;
-      }
-  `
-  const CustomCheckbox = styled.input.attrs({ type: "checkbox" })`
+  const [isChecked, setIsChecked] = useState(item.completed);
+
+  const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const checked = event.target.checked;
+    setIsChecked(checked);
+    onComplete({ ...item, completed: checked });
+  };
+  return (
+    <StyleTaskCard key={item.id}>
+      <CustomWrap>
+        <CustomCheckbox
+          id={item.id}
+          checked={isChecked}
+          onChange={handleCheckboxChange}
+        />
+        <label htmlFor={item.id}>{item.text}</label>
+      </CustomWrap>
+      <Button kind={kind.delete} onClick={() => onDelete(item.id)} text="X" />
+    </StyleTaskCard>
+  );
+};
+const StyleTaskCard = styled.div`
+  width: 95%;
+  margin-bottom: 20px;
+  margin-left: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 20px;
+  transition: all 0.5s ease-in-out;
+  &:hover {
+    background-color: #b7eec6;
+    user-select: none;
+    button {
+      opacity: 1;
+    }
+  }
+`;
+const CustomWrap = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 40px;
+`;
+const CustomCheckbox = styled.input.attrs({ type: "checkbox" })`
   appearance: none;
   width: 20px;
   height: 20px;
@@ -51,22 +80,4 @@ export const TaskCard = ({ item, onDelete, onComplete }: TaskProps) => {
     clip-path: polygon(0% 50%, 40% 90%, 100% 10%);
     transform: translate(-50%, -50%);
   }
-
 `;
-
-  return (
-    <TaskCard key={item.id}>
-        <CustomCheckbox id={item.id} />
-        <label htmlFor={item.id}>{item.text}</label>
-        <Button onClick={() => onDelete(item.id)} text="X" />
-      {/* <Button onClick={() => onDelete(item.id)} text="Remove" />
-      <Button
-        onClick={() => onComplete(item)}
-        text={item.completed ? "Done" : "Complete"}
-        variant={
-          item.completed ? ButtonVariant.secondary : ButtonVariant.primary
-        }
-      /> */}
-    </TaskCard>
-  );
-};
