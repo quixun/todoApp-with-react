@@ -1,36 +1,47 @@
 import React from "react";
+import styled from "styled-components";
+import { theme } from "../styles/theme";
 
 interface ButtonProps {
   text: string;
   onClick?: () => void;
-  type?: "button" | "submit" | "reset";
-  variant?: "primary" | "success";
-};
+  kind: kind;
+}
 
-export const Button = ({
-  onClick,
-  text,
-  type = "button",
-  variant = "primary",
-}: ButtonProps) => {
-  const getButtonClassName = (variant: string) => {
-    switch (variant) {
-      case "success":
-        return "bg-green-500 text-white";
-      default:
-        return "bg-yellow-200 text-gray-900 hover:text-yellow-200 hover:bg-gray-900 hover:border-yellow-200";
-    }
-  };
+export enum kind {
+  add = "add",
+  delete = "delete",
+}
 
-  const defaultClassName = `border border-solid w-24 py-2 rounded-lg transition-all duration-200 ease-in-out border-gray-900 `;
-
+export const Button = ({ onClick, text, kind }: ButtonProps) => {
   return (
-    <button
-      type={type}
-      className={`${defaultClassName} ${getButtonClassName(variant)}`}
-      onClick={onClick}
-    >
+    <DeleteButton $kind={kind} onClick={onClick}>
       {text}
-    </button>
+    </DeleteButton>
   );
 };
+
+const DeleteButton = styled.button<{ $kind: kind.add | kind.delete }>`
+  ${(props) =>
+    props.$kind === kind.delete
+      ? ` opacity: 0;transition: opacity 0.1s ease-in-out;
+          border: none;
+          background-color: transparent;
+          color: red;
+          font-weight: bold;
+          font-size: 20px;
+          &:hover{
+             
+          }`
+      : `background-color:${theme.color.primary};
+         width: 15%;
+         border-radius: 5px;
+         font-weight: bold;
+         height: 25px;
+         transition: 0.3s ease-in-out;
+         &:hover{
+          background-color: #56e356;
+          color: #fff;
+         }
+         `};
+`;
