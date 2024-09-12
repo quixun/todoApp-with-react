@@ -1,26 +1,21 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { App } from './App';
-import { createGlobalStyle } from 'styled-components';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import { App } from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { GlobalStyle } from "./styles/GlobalStyle";
+import "./i18n/i18n";
 
-// Define global styles to ensure full-screen behavior for the root element
-const GlobalStyle = createGlobalStyle`
-  html, body, #root {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-  }
-`;
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <>
+    <GoogleOAuthProvider clientId="399912691846-acsfhr0eq94jakti18pme4iq4r40i6oi.apps.googleusercontent.com">
       <GlobalStyle />
-      <App />
-    </>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </GoogleOAuthProvider>
   </React.StrictMode>
 );
 

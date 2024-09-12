@@ -1,12 +1,30 @@
-import { ToDoApp } from './pages/ToDoApp'
-import React from 'react';
+// App.tsx
+import React from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./contexts/AuthContext"; // Import AuthContext
+import { Login } from "./pages/Login";
+import { ToDoApp } from "./pages/ToDoApp"; // Import ToDoApp component
 
+const AppRoutes: React.FC = () => {
+  const { isAuthenticated } = useAuth();
 
-export const App = () => {
   return (
-    <div className="App">
-      <ToDoApp />
-    </div>
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route
+        path="/todo"
+        element={isAuthenticated ? <ToDoApp /> : <Navigate to="/" />}
+      />
+    </Routes>
   );
-}
+};
 
+export const App: React.FC = () => {
+  return (
+    <AuthProvider>
+        <AppRoutes />
+    </AuthProvider>
+  );
+};
+
+ 
