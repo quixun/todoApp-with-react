@@ -1,30 +1,62 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { CredentialResponse } from "@react-oauth/google";
+import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
-  isAuthenticated: boolean;
-  login: () => void;
+  user: { token: string } | null;
+  login: (tokenResponse: CredentialResponse) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
 
-  const login = () => setIsAuthenticated(true);
-  const logout = () => setIsAuthenticated(false);
+interface AuthProviderProps {
+  children: ReactNode;
+}
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<{ token: string } | null>(null);
+  const [isLoading, setIsLoading] = useState(true); 
+  const navigate = useNavigate();
+
+  const login = (tokenResponse: CredentialResponse) => {
+    if (tokenResponse.credential) {
+      localStorage.setItem("auth_token", tokenResponse.credential);
+      setUser({ token: tokenResponse.credential });
+      navigate("/todo");
+    } else {
+      console.error("No credential found in the token response");
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem("auth_token");
+    setUser(null);
+    navigate("/");
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("auth_token");
+    if (token) {
+      setUser({ token });
+    }
+    setIsLoading(false); 
+  }, []);
+
+  if (isLoading) {
+    return <div>Loading...</div>; 
+  }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 };

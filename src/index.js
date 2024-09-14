@@ -8,9 +8,10 @@ import { GlobalStyle } from "./styles/GlobalStyle";
 import "./i18n/i18n";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 root.render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId="399912691846-acsfhr0eq94jakti18pme4iq4r40i6oi.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={clientId}>
       <GlobalStyle />
       <BrowserRouter>
         <App />

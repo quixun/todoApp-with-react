@@ -7,5 +7,6 @@ export const GlobalStyle = createGlobalStyle`
     height: 100vh;
     width: 100vw;
     font-family: Arial, Helvetica, sans-serif;
+    overflow-x: hidden;
   }
 `;

@@ -1,30 +1,38 @@
-// App.tsx
 import React from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./contexts/AuthContext"; // Import AuthContext
+import {
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
 import { Login } from "./pages/Login";
-import { ToDoApp } from "./pages/ToDoApp"; // Import ToDoApp component
+import { ToDoApp } from "./pages/ToDoApp";
+import Navbar from "./components/common/ButtonAppBar";
+import { useLinks } from "./hooks/useLinks";
 
 const AppRoutes: React.FC = () => {
-  const { isAuthenticated } = useAuth();
+  const { availableLinks } = useLinks();
+  const user = availableLinks.find(link => link.path === "/todo")
 
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
-      <Route
-        path="/todo"
-        element={isAuthenticated ? <ToDoApp /> : <Navigate to="/" />}
-      />
-    </Routes>
+        <Route
+          path="/"
+          element={user ? <Navigate to="/todo" /> : <Login />}
+        />
+        <Route
+          path="/todo"
+          element={user ? <ToDoApp /> : <Navigate to="/" />}
+        />
+      </Routes>
   );
 };
 
 export const App: React.FC = () => {
   return (
     <AuthProvider>
-        <AppRoutes />
+      <Navbar account/>
+      <AppRoutes />
     </AuthProvider>
   );
 };
-
- 

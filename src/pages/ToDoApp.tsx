@@ -9,7 +9,7 @@ import { theme } from "../styles/theme";
 import { Button, kind } from "../components/common/Button";
 import { Storage, saveTaskToLocalStorage } from "../components/Storage/store";
 import { useTranslation } from "react-i18next";
-import { NativeSelect, InputLabel } from "@mui/material";
+import { NativeSelect } from "@mui/material";
 import { locales } from "../i18n/i18n";
 
 type FormValues = {
@@ -64,7 +64,6 @@ export const ToDoApp = () => {
     <Container>
       <CustomForm onSubmit={handleSubmit(handleAddTask)}>
         <SelectWrapper>
-          <InputLabel htmlFor="language-select">{t("language")}</InputLabel>
           <NativeSelect
             id="language-select"
             value={currentLanguage}
@@ -81,10 +80,10 @@ export const ToDoApp = () => {
           control={control}
           name="task"
           rules={{
-            required: { value: true, message: "please enter this field" },
+            required: { value: true, message: "pleaseEnterThisField" },
             minLength: {
               value: 2,
-              message: "please enter at least 2 characters",
+              message: "pleaseEnterAtLeast2Characters",
             },
           }}
           render={({ fieldState: { error }, field: { onChange, value } }) => {
@@ -94,7 +93,7 @@ export const ToDoApp = () => {
                   value={value}
                   error={error}
                   onChange={onChange}
-                  placeholder={t("enter the thing to do")}
+                  placeholder={t("enterTheThingToDo")}
                 />
                 <Button $kind={kind.add} onClick={handleSubmit(handleAddTask)}>
                   {t("add")}
@@ -104,8 +103,8 @@ export const ToDoApp = () => {
           }}
         />
         <FormWrapper>
-          <Heading1>{t("things to do")}</Heading1>
-          {!tasks.length && <span>{t("List is empty. Enter a new thing to do")}</span>}
+          <Heading1>{t("thingsToDo")}</Heading1>
+          {!tasks.length && <span>{t("listIsEmpty.EnterANewThingToDo")}</span>}
           {tasks.map((item) => (
             <TaskItem
               key={item.id}
@@ -123,41 +122,30 @@ export const ToDoApp = () => {
 const Container = styled.div`
   ${theme.alignment.center}
   background-color: ${theme.color.primary};
-  min-height: 100vh;
-  padding: 50px 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  overflow: hidden; 
 `;
 
 const CustomForm = styled.form`
-  ${theme.alignment.center}
-  width: 50%;
-  flex-direction: column;
-  position: relative;
+  width: 100%;
+  max-width: 700px;
+  position: sticky;
+  top: 0; 
+  z-index: 10; 
+  background-color: ${theme.color.primary}; 
+  padding: 10px 0;
 `;
 
 const SelectWrapper = styled.div`
   position: absolute;
-  top: -70px;
-  right: 70px;
+  top: -270px;
+  right: -270px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-`;
-
-const FormWrapper = styled.ul`
-  background-color: ${theme.color.secondary};
-  width: 80%;
-  display: flex-start;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  border: 3px solid #333;
-  border-radius: 10px;
-  box-shadow: 5px 10px 0px 5px #333;
-  padding: 10px 0;
-  position: relative;
-  span {
-    padding: 20px;
-  }
 `;
 
 const Heading1 = styled.h1`
@@ -169,9 +157,34 @@ const Heading1 = styled.h1`
   user-select: none;
 `;
 
-const Wrapper = styled.div`
-  width: 80%;
+
+
+const FormWrapper = styled.ul`
+  background-color: ${theme.color.secondary};
+  width: 100%;
+  max-width: 500px;
+  margin-top: 20px; /* Space between the input form and task list */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  border: 3px solid #333;
+  border-radius: 10px;
+  box-shadow: 5px 10px 0px 5px #333;
+  padding: 10px 0;
+  height: 60vh; /* Height for task list container */
+  overflow-y: auto; /* Enable scrolling inside the task list */
   position: relative;
+  span {
+    padding: 20px;
+  }
+`;
+
+const Wrapper = styled.div`
+  width: 100%;
+  position: relative;
+  margin-top: 10px;
+
   & > input:first-child {
     width: 100%;
     margin-bottom: 10px;
@@ -179,7 +192,8 @@ const Wrapper = styled.div`
 
   & > button:last-child {
     position: absolute;
-    top: 8px;
+    top: 50%; /* Vertically center the button */
     right: 0;
+    transform: translateY(-50%);
   }
 `;

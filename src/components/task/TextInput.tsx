@@ -30,7 +30,7 @@ export const TextInput = ({
       />
       <input type="submit" hidden />
       <ErrorMessage $isVisible={!!error?.message}>
-        {errorMessage}
+        {t(errorMessage)}
       </ErrorMessage>
     </>
   );
