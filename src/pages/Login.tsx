@@ -1,42 +1,22 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
-import { useAuth } from "../contexts/AuthContext";
+import { useDispatch } from "react-redux";
+import { loginRequest } from "../services/apiClient";
 import styled from "styled-components";
-import axios from "axios";
-
-type ServerResponse = {
-  accessToken: string;
-}
+import { useAuth } from "../contexts/AuthContext";
 
 export const Login = () => {
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { login } = useAuth();
 
   const handleLogin = async (response: CredentialResponse) => {
     const googleToken = response.credential;
-    console.log("Google Token:", googleToken);
-    navigate("/todo");
-
     if (googleToken) {
-      try {
-        const res = await axios.post<ServerResponse>(
-          "https://c52c-117-2-155-123.ngrok-free.app/auth/google",
-          {
-            token: googleToken,
-          }
-        );
-
-        const accessToken = res.data.accessToken;
-        console.log("Access Token:", accessToken);
-
-        login(accessToken); 
-        navigate("/todo");
-      } catch (error) {
-        console.error("Error exchanging token:", error);
-      }
-    } else {
-      console.error("Google token not available");
+      await loginRequest(
+        googleToken,
+        login,
+        dispatch
+      );
     }
   };
 

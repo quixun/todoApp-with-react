@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { v4 as uuid4 } from "uuid";
 import styled from "styled-components";
@@ -7,18 +7,20 @@ import { TaskItem } from "../components/task/TaskItem";
 import { Task } from "../types/Task";
 import { theme } from "../styles/theme";
 import { Button, kind } from "../components/common/Button";
-import { Storage, saveTaskToLocalStorage } from "../components/Storage/store";
 import { useTranslation } from "react-i18next";
 import { NativeSelect } from "@mui/material";
 import { locales } from "../i18n/i18n";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../redux/store";
+import { getTodoList } from "../redux/tasks/taskSlice";
 
 type FormValues = {
   task: string;
 };
 
 export const ToDoApp = () => {
-  const StorageName = "job";
-  const [tasks, setTasks] = useState<Task[]>(() => Storage(StorageName));
+  const { tasks, page, limit } = useSelector((state: RootState) => state.tasks);
+  const dispatch = useDispatch();
   const { control, handleSubmit, setValue } = useForm<FormValues>();
   const { t, i18n } = useTranslation();
 
@@ -26,14 +28,9 @@ export const ToDoApp = () => {
 
   const handleAddTask: SubmitHandler<FormValues> = (data) => {
     if (data.task.trim() !== "") {
-      const newTask = {
-        id: uuid4(),
-        text: data.task,
-        completed: false,
-      };
-      const updatedTasks = [...tasks, newTask];
-      setTasks(updatedTasks);
-      saveTaskToLocalStorage(updatedTasks, StorageName);
+      // Handle adding task
+      // Assuming you have an `addTask` function in your API client
+      // dispatch(addTask({ description: data.task }));
       setValue("task", "");
     } else {
       alert("No task added yet");
@@ -41,17 +38,15 @@ export const ToDoApp = () => {
   };
 
   const handleDeleteTask = (id: string) => {
-    const updatedTasks = tasks.filter((task) => task.id !== id);
-    setTasks(updatedTasks);
-    saveTaskToLocalStorage(updatedTasks, StorageName);
+    // Handle deleting task
+    // Assuming you have a `deleteTask` function in your API client
+    // dispatch(deleteTask(id));
   };
 
   const handleCompleteTask = (task: Task) => {
-    const updatedTasks = tasks.map((item) =>
-      item.id === task.id ? { ...item, completed: true } : item
-    );
-    setTasks(updatedTasks);
-    saveTaskToLocalStorage(updatedTasks, StorageName);
+    // Handle completing task
+    // Assuming you have a `completeTask` function in your API client
+    // dispatch(completeTask(task.id));
   };
 
   const handleLanguageChange = (
@@ -59,6 +54,10 @@ export const ToDoApp = () => {
   ) => {
     i18n.changeLanguage(event.target.value as string);
   };
+
+  useEffect(() => {
+    dispatch(getTodoList({description:"",limit:5,page:0}));
+  }, [dispatch, page, limit]);
 
   return (
     <Container>
@@ -86,21 +85,19 @@ export const ToDoApp = () => {
               message: "pleaseEnterAtLeast2Characters",
             },
           }}
-          render={({ fieldState: { error }, field: { onChange, value } }) => {
-            return (
-              <Wrapper>
-                <TextInput
-                  value={value}
-                  error={error}
-                  onChange={onChange}
-                  placeholder={t("enterTheThingToDo")}
-                />
-                <Button $kind={kind.add} onClick={handleSubmit(handleAddTask)}>
-                  {t("add")}
-                </Button>
-              </Wrapper>
-            );
-          }}
+          render={({ fieldState: { error }, field: { onChange, value } }) => (
+            <Wrapper>
+              <TextInput
+                value={value}
+                error={error}
+                onChange={onChange}
+                placeholder={t("enterTheThingToDo")}
+              />
+              <Button $kind={kind.add} onClick={handleSubmit(handleAddTask)}>
+                {t("add")}
+              </Button>
+            </Wrapper>
+          )}
         />
         <FormWrapper>
           <Heading1>{t("thingsToDo")}</Heading1>
@@ -169,8 +166,8 @@ const Wrapper = styled.div`
 
 const SelectWrapper = styled.div`
   position: fixed;
-  top: 70px; 
-  right: 50px; 
+  top: 70px;
+  right: 50px;
   z-index: 1000;
 `;
 
@@ -183,10 +180,12 @@ const Heading1 = styled.h1`
   font-size: 1.5rem;
   user-select: none;
 `;
+
 const TaskList = styled.div`
   overflow-y: auto;
   width: 100%;
-`
+`;
+
 const FormWrapper = styled.ul`
   margin-top: 0;
   background-color: ${theme.color.secondary};
@@ -207,5 +206,3 @@ const FormWrapper = styled.ul`
     padding: 20px;
   }
 `;
-
-

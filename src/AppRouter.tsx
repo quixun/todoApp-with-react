@@ -29,31 +29,29 @@ const routes: RouteConfig[] = [
     policy: RoutePolicy.ForAuthenticated,
   },
 ];
-
 export const AppRouter = () => {
-  const { user } = useAuth();
+  const { user } = useAuth();  // This should now update correctly when the token is set
 
-  const getElement = (policy: RoutePolicy) => {
+  const getElement = (policy: RoutePolicy, element: React.ReactElement) => {
     switch (policy) {
       case RoutePolicy.ForGuests:
-        return user ? <Navigate to="/todo" /> : <Login />;
+        return user ? <Navigate to="/todo" replace /> : element;
       case RoutePolicy.ForAuthenticated:
-        return !user ? <ToDoApp /> : <Navigate to="/" />;
+        return user ? element : <Navigate to="/" replace />;
       default:
-        return <Navigate to="/" />;
+        return <Navigate to="/" replace />;
     }
   };
 
   return (
     <Routes>
-      {routes.map(({ path, policy }) => (
+      {routes.map(({ path, policy, element }) => (
         <Route
           key={path}
           path={path}
-          element={getElement(policy)}
+          element={getElement(policy, element)}
         />
       ))}
     </Routes>
   );
 };
-

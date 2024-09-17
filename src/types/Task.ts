@@ -1,7 +1,14 @@
 export type Task = {
   id: string;
-  text: string;
-  completed: boolean;
+  description: string;
+  completedAt: string | null;
+  deletedAt: string | null;
 };
 
+export type ApiResponse = {
+  page: number;
+  limit: number;
+  total: number;
+  tasks: Task[];
+};
 

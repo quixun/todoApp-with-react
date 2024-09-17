@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from "react";
+import React, { createContext, useContext, ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 type AuthContextType = {
@@ -21,21 +21,22 @@ export const useAuth = (): AuthContextType => {
   return context;
 };
 
-
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const navigate = useNavigate();
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem("auth_token"));
 
-  const login = (token: string) => {
-    localStorage.setItem("auth_token", token);
+  const login = (newToken: string) => {
+    localStorage.setItem("auth_token", newToken);
+    setToken(newToken);  
     navigate("/todo");
   };
 
   const logout = () => {
     localStorage.removeItem("auth_token");
+    setToken(null);
     navigate("/");
   };
 
-  const token = localStorage.getItem("auth_token");
   const user = token ? { token } : null;
 
   return (

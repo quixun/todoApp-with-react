@@ -11,13 +11,20 @@ type TaskProps = {
 };
 
 export const TaskItem = ({ item, onDelete, onComplete }: TaskProps) => {
-  const [isChecked, setIsChecked] = useState(item.completed);
+  const [isChecked, setIsChecked] = useState(!!item.completedAt);
 
   const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked;
     setIsChecked(checked);
-    onComplete({ ...item, completed: checked });
+
+    const updatedTask = {
+      ...item,
+      completedAt: checked ? new Date().toISOString() : null,
+    };
+
+    onComplete(updatedTask);
   };
+
   return (
     <StyleTaskCard key={item.id}>
       <Wrapper>
@@ -26,12 +33,15 @@ export const TaskItem = ({ item, onDelete, onComplete }: TaskProps) => {
           checked={isChecked}
           onChange={handleCheckboxChange}
         />
-        <CustomLabel htmlFor={item.id}>{item.text}</CustomLabel>
+        <CustomLabel htmlFor={item.id}>{item.description}</CustomLabel>
       </Wrapper>
-      <Button $kind={kind.delete} onClick={() => onDelete(item.id)}>X</Button>
+      <Button $kind={kind.delete} onClick={() => onDelete(item.id)}>
+        X
+      </Button>
     </StyleTaskCard>
   );
 };
+
 const StyleTaskCard = styled.div`
   max-width: 100%;
   display: flex;
@@ -47,11 +57,15 @@ const StyleTaskCard = styled.div`
     }
   }
 `;
+
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
   overflow-x: hidden;
 `;
+
 const CustomLabel = styled.label`
   text-overflow: clip;
-`
+  margin-left: 8px;
+  flex: 1;
+`;
