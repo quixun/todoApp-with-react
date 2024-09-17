@@ -37,12 +37,11 @@ export const TextInput = ({
 };
 
 const StyledInput = styled.input`
-  max-width: 80%;
   height: 35px;
   border-radius: 5px;
   background-color: ${theme.color.secondary};
   border: 3px solid #333;
-  padding: 0 120px 0 15px;
+  padding: 0 20% 0 15px;
   font-size: 20px;
   position: relative;
   &:focus {
@@ -58,5 +57,6 @@ const ErrorMessage = styled.span<{ $isVisible: boolean }>`
   transition: opacity 0.3s ease-in-out;
   display: flex;
   justify-content: flex-start;
-  padding-left: 20px;
+  padding: 5px 15px;
+  margin-bottom: 5px;
 `;

@@ -1,22 +1,20 @@
-import React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import { theme } from '../../styles/theme';
+import React from "react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import { theme } from "../../styles/theme";
+import { useAuth } from "../../contexts/AuthContext";
 
-type ButtonAppBarProp = {
-  account: boolean
- }
+const ButtonAppBar = () => {
+  const { user, logout } = useAuth();
 
-export default function ButtonAppBar({ account } : ButtonAppBarProp) {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed">
-        <Toolbar style={{ backgroundColor: theme.color.secondary}}>
+        <Toolbar style={{ backgroundColor: theme.color.secondary }}>
           <IconButton
             size="large"
             edge="start"
@@ -26,12 +24,15 @@ export default function ButtonAppBar({ account } : ButtonAppBarProp) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            News
-          </Typography>
-          <Button color="success">{account ? `Logout` : `Login`}</Button>
+          {user ? (
+            <Button color="success" onClick={logout}>
+              Sign out
+            </Button>
+          ) : null}
         </Toolbar>
       </AppBar>
     </Box>
   );
-}
+};
+
+export default ButtonAppBar;

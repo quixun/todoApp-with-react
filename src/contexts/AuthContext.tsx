@@ -1,12 +1,15 @@
-import { CredentialResponse } from "@react-oauth/google";
-import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import React, { createContext, useContext, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 
-interface AuthContextType {
+type AuthContextType = {
   user: { token: string } | null;
-  login: (tokenResponse: CredentialResponse) => void;
+  login: (token: string) => void;
   logout: () => void;
-}
+};
+
+type AuthProviderProps = {
+  children: ReactNode;
+};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -18,41 +21,22 @@ export const useAuth = (): AuthContextType => {
   return context;
 };
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<{ token: string } | null>(null);
-  const [isLoading, setIsLoading] = useState(true); 
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const navigate = useNavigate();
 
-  const login = (tokenResponse: CredentialResponse) => {
-    if (tokenResponse.credential) {
-      localStorage.setItem("auth_token", tokenResponse.credential);
-      setUser({ token: tokenResponse.credential });
-      navigate("/todo");
-    } else {
-      console.error("No credential found in the token response");
-    }
+  const login = (token: string) => {
+    localStorage.setItem("auth_token", token);
+    navigate("/todo");
   };
 
   const logout = () => {
     localStorage.removeItem("auth_token");
-    setUser(null);
     navigate("/");
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem("auth_token");
-    if (token) {
-      setUser({ token });
-    }
-    setIsLoading(false); 
-  }, []);
-
-  if (isLoading) {
-    return <div>Loading...</div>; 
-  }
+  const token = localStorage.getItem("auth_token");
+  const user = token ? { token } : null;
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>

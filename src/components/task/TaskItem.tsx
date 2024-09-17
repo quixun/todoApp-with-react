@@ -42,7 +42,6 @@ const StyleTaskCard = styled.div`
   &:hover {
     background-color: #b7eec6;
     user-select: none;
-    padding: 0 20px;
     button {
       opacity: 1;
     }

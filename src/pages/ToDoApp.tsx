@@ -105,14 +105,16 @@ export const ToDoApp = () => {
         <FormWrapper>
           <Heading1>{t("thingsToDo")}</Heading1>
           {!tasks.length && <span>{t("listIsEmpty.EnterANewThingToDo")}</span>}
-          {tasks.map((item) => (
-            <TaskItem
-              key={item.id}
-              item={item}
-              onComplete={handleCompleteTask}
-              onDelete={handleDeleteTask}
-            />
-          ))}
+          <TaskList>
+            {tasks.map((item) => (
+              <TaskItem
+                key={item.id}
+                item={item}
+                onComplete={handleCompleteTask}
+                onDelete={handleDeleteTask}
+              />
+            ))}
+          </TaskList>
         </FormWrapper>
       </CustomForm>
     </Container>
@@ -120,80 +122,90 @@ export const ToDoApp = () => {
 };
 
 const Container = styled.div`
-  ${theme.alignment.center}
-  background-color: ${theme.color.primary};
-  height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  overflow: hidden; 
+  align-items: center;
+  justify-content: center;
+  background-color: ${theme.color.primary};
+  height: 100vh;
+  overflow: hidden;
 `;
 
 const CustomForm = styled.form`
   width: 100%;
-  max-width: 700px;
+  max-width: 800px;
+  background-color: ${theme.color.primary};
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
   position: sticky;
-  top: 0; 
-  z-index: 10; 
-  background-color: ${theme.color.primary}; 
-  padding: 10px 0;
-`;
-
-const SelectWrapper = styled.div`
-  position: absolute;
-  top: -270px;
-  right: -270px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-`;
-
-const Heading1 = styled.h1`
-  ${theme.alignment.center}
-  width: 100%;
-  margin-bottom: 10px;
-  border-bottom: 3px solid #333;
-  padding-bottom: 20px;
-  user-select: none;
-`;
-
-
-
-const FormWrapper = styled.ul`
-  background-color: ${theme.color.secondary};
-  width: 100%;
-  max-width: 500px;
-  margin-top: 20px; /* Space between the input form and task list */
+  z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  margin-top: 50px;
+`;
+
+const Wrapper = styled.div`
+  width: 100%;
+  display: flex;
+  max-width: 500px;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+
+  & > input {
+    flex: 1;
+    margin-right: 5px;
+  }
+
+  & > button {
+    position: absolute;
+    height: auto;
+    right: 20px;
+    top: 3px;
+  }
+`;
+
+const SelectWrapper = styled.div`
+  position: fixed;
+  top: 70px; 
+  right: 50px; 
+  z-index: 1000;
+`;
+
+const Heading1 = styled.h1`
+  width: 100%;
+  margin-bottom: 20px;
+  border-bottom: 3px solid #333;
+  padding-bottom: 10px;
+  text-align: center;
+  font-size: 1.5rem;
+  user-select: none;
+`;
+const TaskList = styled.div`
+  overflow-y: auto;
+  width: 100%;
+`
+const FormWrapper = styled.ul`
+  margin-top: 0;
+  background-color: ${theme.color.secondary};
+  width: 100%;
+  max-width: 500px;
+  padding: 10px;
   border: 3px solid #333;
   border-radius: 10px;
-  box-shadow: 5px 10px 0px 5px #333;
-  padding: 10px 0;
-  height: 60vh; /* Height for task list container */
-  overflow-y: auto; /* Enable scrolling inside the task list */
+  box-shadow: 10px 10px 0 10px rgba(0, 0, 0, 0.7);
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   position: relative;
+  box-sizing: border-box;
+
   span {
     padding: 20px;
   }
 `;
 
-const Wrapper = styled.div`
-  width: 100%;
-  position: relative;
-  margin-top: 10px;
 
-  & > input:first-child {
-    width: 100%;
-    margin-bottom: 10px;
-  }
-
-  & > button:last-child {
-    position: absolute;
-    top: 50%; /* Vertically center the button */
-    right: 0;
-    transform: translateY(-50%);
-  }
-`;
