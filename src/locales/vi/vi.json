@@ -1,0 +1,18 @@
+{
+    "login": {
+        "title": {
+            "": ""
+        },
+        "labels": {
+            "": ""
+        }
+    },
+    "todo": {
+        "thingsToDo": "Những việc cần làm",
+        "enterTheThingToDo": "Nhập những việc cần làm",
+        "add": "Thêm",
+        "pleaseEnterThisField": "Vui lòng nhập ô này",
+        "pleaseEnterAtLeast2Characters": "Vui lòng nhập ít nhất 2 kí tự",
+        "listIsEmpty.EnterANewThingToDo": "Danh sách đang trống. Hãy nhập 1 công việc mới cần làm"
+    }
+}

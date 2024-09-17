@@ -1,0 +1,18 @@
+{
+    "login": {
+        "title": {
+            "": ""
+        },
+        "labels": {
+            "": ""
+        }
+    },
+    "todo": {
+        "thingsToDo": "Things to do",
+        "enterTheThingToDo": "Enter the thing to do",
+        "add": "ADD",
+        "pleaseEnterThisField": "Please enter this field",
+        "pleaseEnterAtLeast2Characters": "Please enter at least 2 characters",
+        "listIsEmpty.EnterANewThingToDo": "List is empty. Enter a new thing to do"
+    }
+}
