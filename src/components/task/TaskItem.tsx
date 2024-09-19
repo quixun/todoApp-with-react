@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, memo, useState } from "react";
 import { Button, kind } from "../common/Button";
 import { Task } from "../../types/Task";
 import styled from "styled-components";
@@ -10,7 +10,7 @@ type TaskProps = {
   onComplete: (task: Task) => void;
 };
 
-export const TaskItem = ({ item, onDelete, onComplete }: TaskProps) => {
+export const TaskItem = memo(({ item, onDelete, onComplete }: TaskProps) => {
   const [isChecked, setIsChecked] = useState(!!item.completedAt);
 
   const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -35,12 +35,16 @@ export const TaskItem = ({ item, onDelete, onComplete }: TaskProps) => {
         />
         <CustomLabel htmlFor={item.id}>{item.description}</CustomLabel>
       </Wrapper>
-      <Button $kind={kind.delete} onClick={() => onDelete(item.id)}>
-        X
-      </Button>
+      <Button
+        $kind={kind.delete}
+        onClick={(event) => {
+          event.stopPropagation(); // Prevents the event from bubbling up and causing issues
+          onDelete(item.id);
+        }}
+      >X</Button>
     </StyleTaskCard>
   );
-};
+});
 
 const StyleTaskCard = styled.div`
   max-width: 100%;

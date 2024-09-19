@@ -12,11 +12,9 @@ export const Login = () => {
   const handleLogin = async (response: CredentialResponse) => {
     const googleToken = response.credential;
     if (googleToken) {
-      await loginRequest(
-        googleToken,
-        login,
-        dispatch
-      );
+      await loginRequest(googleToken, login, dispatch);
+    } else {
+      console.error("Google token is undefined");
     }
   };
 

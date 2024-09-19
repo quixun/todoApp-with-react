@@ -1,4 +1,4 @@
-import React, { ChangeEventHandler } from "react";
+import React, { ChangeEventHandler, memo } from "react";
 import { FieldError } from "react-hook-form";
 import styled from "styled-components";
 import { theme } from "../../styles/theme";
@@ -11,7 +11,7 @@ type InputProps = {
   placeholder?: string;
 };
 
-export const TextInput = ({
+export const TextInput = memo(({
   value,
   onChange,
   error,
@@ -19,6 +19,8 @@ export const TextInput = ({
 }: InputProps) => {
   const { t } = useTranslation();
   const errorMessage = error?.message ? t(error.message) : " ";
+  console.log("text input is called");
+  
   return (
     <>
       <StyledInput
@@ -34,7 +36,7 @@ export const TextInput = ({
       </ErrorMessage>
     </>
   );
-};
+});
 
 const StyledInput = styled.input`
   height: 35px;
