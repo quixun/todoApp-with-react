@@ -27,9 +27,10 @@ export const createAppApiClient = () => {
   return {
     googleLogin: googleLogin(ggApiClient),
     getTodoList: getTodoList(appApiClient),
-    addTask: addTask(appApiClient), 
-    deleteTask: deleteTask(appApiClient), 
-    completeTask: completeTask(appApiClient)
+    addTask: addTask(appApiClient),
+    deleteTask: deleteTask(appApiClient),
+    completeTask: completeTask(appApiClient),
+    uncompleteTask: uncompleteTask(appApiClient),
   };
 };
 
@@ -63,17 +64,23 @@ const addTask =
     return res.data;
   };
 
-  const deleteTask =
+const deleteTask =
   (api: AxiosInstance) =>
   async (taskId: string): Promise<any> => {
     const res = await api.delete(`/${taskId}`);
     return res.data;
   };
 
-// Function to handle completing a task
 const completeTask =
   (api: AxiosInstance) =>
   async (taskId: string, completedAt: string): Promise<any> => {
-    const res = await api.patch(`/${taskId}`, { completedAt });
+    const res = await api.post(`/${taskId}/complete`, { completedAt });
+    return res.data;
+  };
+
+const uncompleteTask =
+  (api: AxiosInstance) =>
+  async (taskId: string, completedAt: string): Promise<any> => {
+    const res = await api.post(`/${taskId}/incomplete`, { completedAt });
     return res.data;
   };

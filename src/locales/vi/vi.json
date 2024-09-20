@@ -1,10 +1,11 @@
 {
     "login": {
         "title": {
-            "": ""
+            "signInWithGG": "Đăng nhập với Google"
         },
         "labels": {
-            "": ""
+            "logOut": "Đăng xuất",
+            "logIn": "Đăng Nhập"
         }
     },
     "todo": {

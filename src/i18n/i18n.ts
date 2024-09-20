@@ -13,15 +13,23 @@ export const locales: Record<string, string> = {
 const resources: Resource = {
   en: {
     todo: EN_Page.todo,
+    login: {
+      title: EN_Page.login.title, 
+      labels: EN_Page.login.labels   
+    },
   },
   vi: {
     todo: VI_Page.todo,
+    login: {
+      title: VI_Page.login.title, 
+      labels: VI_Page.login.labels   
+    },
   },
 };
 
 const options: InitOptions = {
   resources,
-  ns: ["todo"],
+  ns: ["todo","login"],
   fallbackLng: "vi",
   interpolation: {
     escapeValue: false,

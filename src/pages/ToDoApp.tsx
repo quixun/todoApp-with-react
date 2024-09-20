@@ -7,8 +7,7 @@ import { Task } from "../types/Task";
 import { theme } from "../styles/theme";
 import { Button, kind } from "../components/common/Button";
 import { useTranslation } from "react-i18next";
-import { NativeSelect, Pagination } from "@mui/material";
-import { locales } from "../i18n/i18n";
+import { Pagination } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import {
@@ -17,6 +16,7 @@ import {
   deleteTask,
   getTodoList,
   setPage,
+  uncompleteTask,
 } from "../redux/tasks/taskSlice";
 
 type FormValues = {
@@ -29,20 +29,14 @@ export const ToDoApp = () => {
   );
   const dispatch = useDispatch<AppDispatch>();
   const { control, handleSubmit, setValue } = useForm<FormValues>();
-  const { t, i18n } = useTranslation();
-
-  const currentLanguage = i18n.language as keyof typeof locales;
+  const { t } = useTranslation();
 
   const handleAddTask: SubmitHandler<FormValues> = async (data) => {
-    console.log("add function is called");
-
     if (data.task.trim() !== "") {
       try {
-        await dispatch(addTask({ description: data.task }));
+        await dispatch(addTask({ description: data.task })).unwrap();
         setValue("task", "");
-
-        // Fetch the updated task list after adding a new task
-        dispatch(getTodoList({ description: "", limit, page }));
+        // dispatch(getTodoList({ description: "", limit, page }));
       } catch (error) {
         console.error("Error adding task:", error);
       }
@@ -53,30 +47,33 @@ export const ToDoApp = () => {
 
   const handleDeleteTask = useCallback(
     async (id: string) => {
-      console.log("delete function is called");
-
       try {
-        await dispatch(deleteTask(id));
+        await dispatch(deleteTask(id)).unwrap();
+        dispatch(getTodoList({ description: "", limit, page }));
       } catch (error) {
         console.error("Error deleting task:", error);
       }
     },
-    [dispatch]
+    [dispatch, limit, page]
   );
 
   const handleCompleteTask = async (task: Task) => {
     try {
       const completedAt = new Date().toISOString();
       await dispatch(completeTask({ taskId: task.id, completedAt }));
+      // No need to refetch tasks here since the state is updated directly
     } catch (error) {
       console.error("Error completing task:", error);
     }
   };
 
-  const handleLanguageChange = (
-    event: React.ChangeEvent<{ value: unknown }>
-  ) => {
-    i18n.changeLanguage(event.target.value as string);
+  const handleUncompleteTask = async (task: Task) => {
+    try {
+      const completedAt = ""; // Set to empty or null based on your API requirement
+      await dispatch(uncompleteTask({ taskId: task.id, completedAt }));
+    } catch (error) {
+      console.error("Error uncompleting task:", error);
+    }
   };
 
   const handlePageChange = useCallback(
@@ -93,19 +90,6 @@ export const ToDoApp = () => {
   return (
     <Container>
       <CustomForm onSubmit={handleSubmit(handleAddTask)}>
-        <SelectWrapper>
-          <NativeSelect
-            id="language-select"
-            value={currentLanguage}
-            onChange={handleLanguageChange}
-          >
-            {Object.keys(locales).map((key) => (
-              <option key={key} value={key}>
-                {locales[key as keyof typeof locales]}
-              </option>
-            ))}
-          </NativeSelect>
-        </SelectWrapper>
         <Controller
           control={control}
           name="task"
@@ -121,7 +105,7 @@ export const ToDoApp = () => {
                 onChange={onChange}
                 placeholder={t("enterTheThingToDo")}
               />
-              <Button $kind={kind.add} type="submit" onClick={() => handleAddTask}>
+              <Button $kind={kind.add} type="submit">
                 {t("add")}
               </Button>
             </Wrapper>
@@ -129,16 +113,20 @@ export const ToDoApp = () => {
         />
         <FormWrapper>
           <Heading1>{t("thingsToDo")}</Heading1>
-          {!tasks.length && <span>{t("listIsEmpty.EnterANewThingToDo")}</span>}
           <TaskList>
-            {tasks.map((item) => (
-              <TaskItem
-                key={item.id}
-                item={item}
-                onComplete={handleCompleteTask}
-                onDelete={handleDeleteTask}
-              />
-            ))}
+            {tasks && tasks.length > 0 ? (
+              tasks.map((item: Task) => (
+                <TaskItem
+                  key={item.id}
+                  item={item}
+                  onComplete={handleCompleteTask}
+                  onUncomplete={handleUncompleteTask}
+                  onDelete={handleDeleteTask}
+                />
+              ))
+            ) : (
+              <span>{t("listIsEmpty.EnterANewThingToDo")}</span>
+            )}
           </TaskList>
           <PaginationWrapper>
             <Pagination
@@ -164,8 +152,8 @@ const Container = styled.div`
   background-color: ${theme.color.primary};
   height: 100vh;
   overflow: hidden;
-  padding: 20px; /* Added padding */
-  box-sizing: border-box; /* Added to prevent overflow */
+  padding: 20px;
+  box-sizing: border-box;
 `;
 
 const CustomForm = styled.form`
@@ -180,7 +168,7 @@ const CustomForm = styled.form`
   flex-direction: column;
   align-items: center;
   margin-top: 50px;
-  box-sizing: border-box; /* Added to prevent overflow */
+  box-sizing: border-box;
 `;
 
 const Wrapper = styled.div`
@@ -202,13 +190,6 @@ const Wrapper = styled.div`
     right: 20px;
     top: 3px;
   }
-`;
-
-const SelectWrapper = styled.div`
-  position: fixed;
-  top: 70px;
-  right: 50px;
-  z-index: 1000;
 `;
 
 const Heading1 = styled.h1`
@@ -241,14 +222,14 @@ const FormWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   position: relative;
-  box-sizing: border-box; /* Added to prevent overflow */
+  box-sizing: border-box;
 `;
 
 const PaginationWrapper = styled.div`
-  margin-top: auto; /* Pushes the pagination to the bottom */
+  margin-top: auto;
   padding: 10px;
   width: 100%;
   display: flex;
   justify-content: center;
-  box-sizing: border-box; /* Added to prevent overflow */
+  box-sizing: border-box;
 `;

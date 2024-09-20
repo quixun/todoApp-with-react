@@ -24,9 +24,10 @@ const apiClient = createAppApiClient();
 
 export const addTask = createAsyncThunk<any, AddTaskRequest>(
   "tasks/addTask",
-  async (task, { dispatch }) => {
-    await apiClient.addTask(task);
-    dispatch(getTodoList({ description: "", limit: 5, page: 0 })); // Refetch tasks after adding
+  async (task) => {
+    const newTask = await apiClient.addTask(task); 
+    console.log("Newly added task:", newTask);
+    return newTask; 
   }
 );
 
@@ -34,16 +35,24 @@ export const deleteTask = createAsyncThunk<any, string>(
   "tasks/deleteTask",
   async (id) => {
     await apiClient.deleteTask(id);
-    return id; // Return the id for easier filtering in reducers
+    return id; 
   }
 );
 
 export const completeTask = createAsyncThunk<
-  any,
+  Task, // Return type
   { taskId: string; completedAt: string }
->("tasks/completeTask", async ({ taskId, completedAt }) => {
-  await apiClient.completeTask(taskId, completedAt);
-  return { taskId, completedAt }; // Return data for easier updating in reducers
+>("tasks/completeTask", async ({ taskId, completedAt }, { extra: api }) => {
+  const task = await apiClient.completeTask(taskId, completedAt);
+  return task; // Return the complete task object
+});
+
+export const uncompleteTask = createAsyncThunk<
+  Task, // Return type
+  { taskId: string; completedAt: string }
+>("tasks/uncompleteTask", async ({ taskId, completedAt }, { extra: api }) => {
+  const task = await apiClient.uncompleteTask(taskId, completedAt);
+  return task; // Return the incomplete task object
 });
 
 export const getTodoList = createAsyncThunk<any, GetTodoListRequest>(
@@ -62,7 +71,7 @@ const tasksSlice = createSlice({
       state.page += 1;
     },
     setPage(state, action) {
-      state.page = action.payload;
+      state.page = action.payload;      
     },
     setTasks(state, action) {
       const { tasks, total, page, limit, mode } = action.payload;
@@ -89,16 +98,22 @@ const tasksSlice = createSlice({
         state.limit = action.payload.limit;
       })
       .addCase(addTask.fulfilled, (state, action) => {
-        // Refetch the task list or use the setTasks action to refresh the list
+        // 
       })
       .addCase(deleteTask.fulfilled, (state, action) => {
+
         state.tasks = state.tasks.filter((task) => task.id !== action.payload);
       })
       .addCase(completeTask.fulfilled, (state, action) => {
+        const updatedTask = action.payload;
         state.tasks = state.tasks.map((task) =>
-          task.id === action.payload.taskId
-            ? { ...task, completedAt: action.payload.completedAt }
-            : task
+          task.id === updatedTask.id ? updatedTask : task
+        );
+      })
+      .addCase(uncompleteTask.fulfilled, (state, action) => {
+        const updatedTask = action.payload;
+        state.tasks = state.tasks.map((task) =>
+          task.id === updatedTask.id ? updatedTask : task
         );
       });
   },

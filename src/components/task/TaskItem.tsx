@@ -1,4 +1,4 @@
-import React, { ChangeEvent, memo, useState } from "react";
+import React, { ChangeEvent, memo } from "react";
 import { Button, kind } from "../common/Button";
 import { Task } from "../../types/Task";
 import styled from "styled-components";
@@ -7,22 +7,24 @@ import { Checkbox } from "@mui/material";
 type TaskProps = {
   item: Task;
   onDelete: (id: string) => void;
-  onComplete: (task: Task) => void;
+  onComplete: (task: Task) => Promise<void>;
+  onUncomplete: (task: Task) => Promise<void>;
 };
 
-export const TaskItem = memo(({ item, onDelete, onComplete }: TaskProps) => {
-  const [isChecked, setIsChecked] = useState(!!item.completedAt);
-
+export const TaskItem = memo(({ item, onDelete, onComplete, onUncomplete }: TaskProps) => {
   const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked;
-    setIsChecked(checked);
 
     const updatedTask = {
       ...item,
       completedAt: checked ? new Date().toISOString() : null,
     };
 
-    onComplete(updatedTask);
+    if (checked) {
+      onComplete(updatedTask);
+    } else {
+      onUncomplete(updatedTask);
+    }
   };
 
   return (
@@ -30,7 +32,7 @@ export const TaskItem = memo(({ item, onDelete, onComplete }: TaskProps) => {
       <Wrapper>
         <Checkbox
           id={item.id}
-          checked={isChecked}
+          checked={!!item.completedAt}
           onChange={handleCheckboxChange}
         />
         <CustomLabel htmlFor={item.id}>{item.description}</CustomLabel>
@@ -38,14 +40,17 @@ export const TaskItem = memo(({ item, onDelete, onComplete }: TaskProps) => {
       <Button
         $kind={kind.delete}
         onClick={(event) => {
-          event.stopPropagation(); // Prevents the event from bubbling up and causing issues
+          event.stopPropagation();
           onDelete(item.id);
         }}
-      >X</Button>
+      >
+        X
+      </Button>
     </StyleTaskCard>
   );
 });
 
+// Styled components...
 const StyleTaskCard = styled.div`
   max-width: 100%;
   display: flex;

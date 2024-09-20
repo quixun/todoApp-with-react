@@ -1,10 +1,11 @@
 {
     "login": {
         "title": {
-            "": ""
+            "signInWithGG": "Sign in with Google"
         },
         "labels": {
-            "": ""
+            "logOut": "Log out",
+            "logIn" : "Login"
         }
     },
     "todo": {

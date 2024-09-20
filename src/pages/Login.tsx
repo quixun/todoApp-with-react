@@ -4,9 +4,11 @@ import { useDispatch } from "react-redux";
 import { loginRequest } from "../services/apiClient";
 import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export const Login = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation("login");
   const { login } = useAuth();
 
   const handleLogin = async (response: CredentialResponse) => {
@@ -24,7 +26,7 @@ export const Login = () => {
 
   return (
     <LoginContainer>
-      <Title>Sign in with Google</Title>
+      <Title>{t("title.signInWithGG")}</Title>
       <GoogleLogin onSuccess={handleLogin} onError={handleLoginError} />
     </LoginContainer>
   );
